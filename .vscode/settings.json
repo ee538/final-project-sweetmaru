@@ -92,7 +92,17 @@
     "*.tcc": "cpp",
     "memory_resource": "cpp",
     "stop_token": "cpp",
-    "cfloat": "cpp"
+    "cfloat": "cpp",
+    "cfenv": "cpp",
+    "csetjmp": "cpp",
+    "csignal": "cpp",
+    "rope": "cpp",
+    "slist": "cpp",
+    "scoped_allocator": "cpp",
+    "shared_mutex": "cpp",
+    "valarray": "cpp",
+    "charconv": "cpp",
+    "cuchar": "cpp"
   },
   "lldb.displayFormat": "auto",
   "lldb.dereferencePointers": true,

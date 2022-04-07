@@ -33,12 +33,11 @@ git_repository(
 
 new_local_repository(
 	name = "opencv",
-	path = "/opt/homebrew/Cellar/opencv/4.5.5",
+	path = "opencv/install",
 	build_file = "opencv.BUILD",
 )
-
 new_local_repository(
     name = "ncurses",
-    path = "/opt/homebrew/Cellar/ncurses/6.3",
+    path = "/usr/", # Use this for Ubuntu
     build_file = "ncurses.BUILD",
 )

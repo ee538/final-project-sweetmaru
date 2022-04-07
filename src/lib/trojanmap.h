@@ -14,7 +14,9 @@
 #include <math.h>
 #include <fstream>
 #include <sstream>
-#include <climits>
+#include <locale>         // std::locale, std::tolower
+#include "limits.h"
+
 
 // A Node is the location of one point in the map.
 class Node {

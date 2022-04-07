@@ -1,5 +1,6 @@
 #include "trojanmap.h"
 
+
 //-----------------------------------------------------
 // TODO: Student should implement the following:
 //-----------------------------------------------------
@@ -10,7 +11,7 @@
  * @return {double}         : latitude
  */
 double TrojanMap::GetLat(const std::string& id) {
-    return 0;
+    return data[id].lat;
 }
 
 /**
@@ -20,7 +21,7 @@ double TrojanMap::GetLat(const std::string& id) {
  * @return {double}         : longitude
  */
 double TrojanMap::GetLon(const std::string& id) { 
-    return 0;
+    return data[id].lon;
 }
 
 /**
@@ -30,7 +31,7 @@ double TrojanMap::GetLon(const std::string& id) {
  * @return {std::string}    : name
  */
 std::string TrojanMap::GetName(const std::string& id) { 
-    return "";
+    return data[id].name;
 }
 
 /**
@@ -40,7 +41,7 @@ std::string TrojanMap::GetName(const std::string& id) {
  * @return {std::vector<std::string>}  : neighbor ids
  */
 std::vector<std::string> TrojanMap::GetNeighborIDs(const std::string& id) {
-    return {};
+    return data[id].neighbors;
 }
 
 /**
@@ -52,6 +53,11 @@ std::vector<std::string> TrojanMap::GetNeighborIDs(const std::string& id) {
  */
 std::string TrojanMap::GetID(const std::string& name) {
   std::string res = "";
+  for (auto cur : data){
+    if (cur.second.name == name){
+      return cur.second.id;
+    }
+  }
   return res;
 }
 
@@ -63,6 +69,13 @@ std::string TrojanMap::GetID(const std::string& name) {
  */
 std::pair<double, double> TrojanMap::GetPosition(std::string name) {
   std::pair<double, double> results(-1, -1);
+  std::string id = GetID(name);
+  if (id.length() > 0){
+    double lat = data[id].lat;
+    double lon = data[id].lon;
+    results.first = lat;
+    results.second = lon;
+  }
   return results;
 }
 
@@ -71,8 +84,35 @@ std::pair<double, double> TrojanMap::GetPosition(std::string name) {
  * CalculateEditDistance: Calculate edit distance between two location names
  * 
  */
+// Use a helper to realize a dynamic programing solution
+int helper(std::string &a, std::string &b, int l1, int l2, std::vector<std::vector<int>> &memo);
+
 int TrojanMap::CalculateEditDistance(std::string a, std::string b){
-    return 0;
+    int len1 = a.length();
+    int len2 = b.length();
+    std::vector<std::vector<int>> memo(len1 + 1, std::vector<int>(len2 + 1, -1));
+    int ans = helper(a, b, len1, len2, memo);
+    return ans;
+}
+
+int helper(std::string &a, std::string &b, int l1, int l2, std::vector<std::vector<int>> &memo){
+  if (l1 == 0){
+    return l2;
+  }
+  if (l2 == 0){
+    return l1;
+  }
+  if (memo[l1][l2] >= 0){
+    return memo[l1][l2];
+  }
+  int ans = 0;
+  if (a[l1 - 1] == b[l2 - 1]){
+    ans = helper(a, b, l1 - 1, l2 -1, memo);
+  } else {
+    ans = 1 + std::min(helper(a, b, l1 - 1, l2, memo), std::min(helper(a, b, l1 - 1, l2 -1, memo), helper(a, b, l1, l2 -1, memo)));
+  }
+  memo[l1][l2] = ans;
+  return ans;
 }
 
 /**
@@ -83,6 +123,15 @@ int TrojanMap::CalculateEditDistance(std::string a, std::string b){
  */
 std::string TrojanMap::FindClosestName(std::string name) {
   std::string tmp = "";
+  int minValue = INT_MAX/2;
+  for (auto cur : data){
+    std::string temp = cur.second.name;
+    int dist = CalculateEditDistance(temp, name);
+    if (dist < minValue){
+      minValue = dist;
+      tmp = temp;
+    }
+  }
   return tmp;
 }
 
@@ -96,6 +145,24 @@ std::string TrojanMap::FindClosestName(std::string name) {
  */
 std::vector<std::string> TrojanMap::Autocomplete(std::string name){
   std::vector<std::string> results;
+  for (int i = 0; i < name.length(); i++){
+    name[i] = tolower(name[i]);
+  }
+  int size = name.length();
+  for (auto cur : data){
+    std::string temp = cur.second.name;
+    std::string lowercaseTemp = temp;
+    if (temp.length() < size){
+      continue;
+    }
+    for (int i = 0; i < temp.length(); i++){
+      lowercaseTemp[i] = tolower(temp[i]);
+    }
+    int ans = name.compare(0, name.length(), lowercaseTemp, 0, name.length());
+    if (ans == 0){
+      results.push_back(temp);
+    }
+  }
   return results;
 }
 
@@ -283,6 +350,7 @@ void TrojanMap::CreateGraphFromCSVFile() {
   fin.open("src/lib/data.csv", std::ios::in);
   std::string line, word;
 
+  // remove first line
   getline(fin, line);
   while (getline(fin, line)) {
     std::stringstream s(line);
