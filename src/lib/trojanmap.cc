@@ -90,6 +90,12 @@ int helper(std::string &a, std::string &b, int l1, int l2, std::vector<std::vect
 int TrojanMap::CalculateEditDistance(std::string a, std::string b){
     int len1 = a.length();
     int len2 = b.length();
+    for (int i = 0; i < a.length(); i++){
+      a[i] = tolower(a[i]);
+    }
+    for (int i = 0; i < b.length(); i++){
+      b[i] = tolower(b[i]);
+    }
     std::vector<std::vector<int>> memo(len1 + 1, std::vector<int>(len2 + 1, -1));
     int ans = helper(a, b, len1, len2, memo);
     return ans;
@@ -126,9 +132,15 @@ std::string TrojanMap::FindClosestName(std::string name) {
   int minValue = INT_MAX/2;
   for (auto cur : data){
     std::string temp = cur.second.name;
+    if (temp.length() == 0){
+      continue;
+    }
     int dist = CalculateEditDistance(temp, name);
     if (dist < minValue){
       minValue = dist;
+      tmp = temp;
+    }
+    if (dist == minValue && temp.length() > tmp.length()){
       tmp = temp;
     }
   }
