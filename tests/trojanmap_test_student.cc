@@ -36,6 +36,7 @@ TEST(TrojanMapStudentTest, P1_CalculateEditDistance) {
   EXPECT_EQ(m.CalculateEditDistance("love", "lovely"), 2);
   EXPECT_EQ(m.CalculateEditDistance("love", "uvol"), 4);
   EXPECT_EQ(m.CalculateEditDistance("sunday", "saturday"), 3);
+  EXPECT_EQ(m.CalculateEditDistance("SunDay", "saturday"), 3); //not case sensitive
 }
 
 TEST(TrojanMapStudentTest, P1_FindClosestName) {
@@ -43,6 +44,8 @@ TEST(TrojanMapStudentTest, P1_FindClosestName) {
   EXPECT_EQ(m.FindClosestName("Chiptle"), "Chipotle");
   EXPECT_EQ(m.FindClosestName("Smoke Sh"), "Smoke Shop");
   EXPECT_EQ(m.FindClosestName("Pic"), "Pico");
+  EXPECT_EQ(m.FindClosestName("c"), "KFC");
+  EXPECT_EQ(m.FindClosestName("ca"), "CAVA"); //avoid choosing the empty strings or substituted by names with only numbers
 }
 
 TEST(TrojanMapStudentTest, P1_Autocomplete) {
