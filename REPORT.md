@@ -7,6 +7,7 @@
 ### Algorithms:  
 
 * CalculateEditDistance  
+
 We use dynamic programming to solve this problem, specifically, we use memerization.  
 
 The data structure we use for a memo is a 2D vector, in which memo[i][j] represents 
@@ -37,10 +38,10 @@ Traverse the map and call CalculateEditDistance each time, assume n words in the
 Traverse the map and compare the names char by char, assume n words in the map, m is the length of the input name, worset case -----> O(mn)  
 
 ### Time spent:  
-* 1. Autocomplete: 
+1. Autocomplete: 
 18ms  
 
-* 2. Find the location: 
+2. Find the location: 
 13ms   
 
 ### Conclusion:  
