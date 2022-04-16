@@ -102,7 +102,8 @@
     "shared_mutex": "cpp",
     "valarray": "cpp",
     "charconv": "cpp",
-    "cuchar": "cpp"
+    "cuchar": "cpp",
+    "*.inc": "cpp"
   },
   "lldb.displayFormat": "auto",
   "lldb.dereferencePointers": true,

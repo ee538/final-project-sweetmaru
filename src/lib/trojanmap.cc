@@ -205,7 +205,7 @@ double TrojanMap::CalculateDistance(const std::string &a_id, const std::string &
 double TrojanMap::CalculatePathLength(const std::vector<std::string> &path) {
   // Do not change this function
   double sum = 0;
-  for (int i = 0;i < int(path.size())-1; i++) {
+  for (int i = 0; i < int(path.size())-1; i++) {
     sum += CalculateDistance(path[i], path[i+1]);
   }
   return sum;
@@ -219,9 +219,75 @@ double TrojanMap::CalculatePathLength(const std::vector<std::string> &path) {
  * @param  {std::string} location2_name     : goal
  * @return {std::vector<std::string>}       : path
  */
+
+
+
 std::vector<std::string> TrojanMap::CalculateShortestPath_Dijkstra(
     std::string location1_name, std::string location2_name) {
+
   std::vector<std::string> path;
+  // if name uncorrect.
+  std::string sourceID = GetID(location1_name);
+  std::string destID = GetID(location2_name);
+  if (sourceID.size() == 0 || destID.size() == 0){
+    return path;
+  }
+  // if name correct. Initialization.
+  std::unordered_set<std::string> visited;
+  std::unordered_map<std::string, double> d;
+  std::unordered_map<std::string, std::string> p;
+  std::priority_queue<std::pair<double, std::string>,
+                      std::vector<std::pair<double, std::string>>, cmp> pq;  
+
+  for (auto cur : data){
+    d[cur.first] = INT_MAX/2.0;
+    p[cur.first] = cur.first;
+  }
+
+  // Start from source
+  d[sourceID] = 0;
+  pq.push(std::make_pair(d[sourceID], sourceID));
+
+  while (!pq.empty()){
+    std::pair<double, std::string> cur = pq.top();
+    pq.pop();
+    std::string id = cur.second;
+    double dist = cur.first;
+    if (visited.count(id) > 0){
+      continue;
+    }
+    visited.insert(id);
+    if (data[id].neighbors.empty()){
+      continue;
+    }
+    // check if current node's distance is greater than ...
+    if (dist > d[id]){
+      continue;
+    }
+    // for each neighbour
+    std::vector<std::string> neis = data[id].neighbors;
+    for (std::string nei : neis){
+      double weight = CalculateDistance(id, nei);
+      if (d[nei] <= d[id] + weight){
+        continue;
+      }
+      d[nei] = d[id] + weight;
+      p[nei] = id;
+      pq.push(std::make_pair(d[nei], nei));
+    }
+  }
+  
+  if (p[destID] == destID){
+    return path;
+  }
+  std::string curID = destID;
+  while (curID != sourceID){
+    path.push_back(curID);
+    curID = p[curID];
+  }
+  path.push_back(sourceID);
+  std::reverse(path.begin(), path.end());
+  
   return path;
 }
 
@@ -236,6 +302,55 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Dijkstra(
 std::vector<std::string> TrojanMap::CalculateShortestPath_Bellman_Ford(
     std::string location1_name, std::string location2_name){
   std::vector<std::string> path;
+  // if name uncorrect.
+  std::string sourceID = GetID(location1_name);
+  std::string destID = GetID(location2_name);
+  if (sourceID.size() == 0 || destID.size() == 0){
+    return path;
+  }
+  // if name is correct, initialization.
+  std::unordered_map<std::string, double> d;
+  std::unordered_map<std::string, std::string> p;
+  bool stop = true;
+
+  for (auto cur : data){
+    d[cur.first] = INT_MAX/2.0;
+    p[cur.first] = cur.first;
+  }
+  // Initialzie source
+  d[sourceID] = 0;
+
+  for (int i = 0; i < data.size() - 1; i++){
+    stop = true;
+    // for each edge
+    for (auto cur : data){
+      std::string id = cur.first;
+      std::vector<std::string> neis = data[id].neighbors;
+      for (std::string nei : neis){
+        double dist = CalculateDistance(id, nei);
+        if (d[id] + dist < d[nei]){
+          d[nei] = d[id] + dist;
+          p[nei] = id;
+          stop = false;
+        }
+      }
+    }
+    if (stop == true){
+      break;
+    }
+  }
+  
+  if (p[destID] == destID){
+    return path;
+  }
+  std::string curID = destID;
+  while (curID != sourceID){
+    path.push_back(curID);
+    curID = p[curID];
+  }
+  path.push_back(sourceID);
+  std::reverse(path.begin(), path.end());
+
   return path;
 }
 

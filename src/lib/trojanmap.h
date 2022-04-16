@@ -16,6 +16,7 @@
 #include <sstream>
 #include <locale>         // std::locale, std::tolower
 #include "limits.h"
+#include <functional>
 
 
 // A Node is the location of one point in the map.
@@ -128,6 +129,14 @@ class TrojanMap {
   
   //----------------------------------------------------- User-defined functions
 
+};
+
+struct cmp{
+  bool operator()(std::pair<double, std::string> &a, 
+                  std::pair<double, std::string> &b){
+
+      return a.first > b.first; 
+  }
 };
 
 #endif
