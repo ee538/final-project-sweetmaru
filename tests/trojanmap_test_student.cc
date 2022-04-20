@@ -95,34 +95,43 @@ TEST(TrojanMapStudentTest, P1_Autocomplete) {
 
 
 
-
+// To avoid unexpected error,
+// When running this test, please modify the full diectory of input file to your current directory.
 TEST(TrojanMapStudentTest, P2_ReadLocations) {
   TrojanMap m;
   std::vector<std::string> gt1 ={"Ralphs", "KFC","Chick-fil-A"};
-  auto result1 = m.ReadLocationsFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/topologicalsort_locations.csv");
+  // auto result1 = m.ReadLocationsFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/topologicalsort_locations.csv");
+  auto result1 = m.ReadLocationsFromCSVFile("/home/jerry/Desktop/final-project-sweetmaru/input/topologicalsort_locations.csv");
   EXPECT_EQ(result1, gt1);
-
+  
   std::vector<std::string> gt2 ={"Target", "Chipotle","Ralphs","Leavey Library"};
-  auto result2 = m.ReadLocationsFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_loc1.csv");
+  // auto result2 = m.ReadLocationsFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_loc1.csv");
+  auto result2 = m.ReadLocationsFromCSVFile("/home/jerry/Desktop/final-project-sweetmaru/input/my_loc1.csv");
   EXPECT_EQ(result2, gt2);
 
   std::vector<std::string> gt3 ={"Target", "Chipotle","Ralphs","Leavey Library","Dulce"};
-  auto result3 = m.ReadLocationsFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_loc2.csv");
+  // auto result3 = m.ReadLocationsFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_loc2.csv");
+  auto result3 = m.ReadLocationsFromCSVFile("/home/jerry/Desktop/final-project-sweetmaru/input/my_loc2.csv");
   EXPECT_EQ(result3, gt3);
 }
 
+// To avoid unexpected error,
+// When running this test, please modify the full diectory of input file to your current directory.
 TEST(TrojanMapStudentTest, P2_ReadDependencies) {
   TrojanMap m;
   std::vector<std::vector<std::string>> gt1 ={{"Ralphs","Chick-fil-A"}, {"Ralphs","KFC"}, {"Chick-fil-A","KFC"}};
-  auto result1 = m.ReadDependenciesFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/topologicalsort_dependencies.csv");
+  // auto result1 = m.ReadDependenciesFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/topologicalsort_dependencies.csv");
+  auto result1 = m.ReadDependenciesFromCSVFile("/home/jerry/Desktop/final-project-sweetmaru/input/topologicalsort_dependencies.csv");
   EXPECT_EQ(result1, gt1);
 
   std::vector<std::vector<std::string>> gt2 ={{"Target","Chipotle"}, {"Target","Leavey Library"}, {"Chipotle","Ralphs"},{"Ralphs","Target"},{"Ralphs","Leavey Library"}};
-  auto result2 = m.ReadDependenciesFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_dep1.csv");
+  // auto result2 = m.ReadDependenciesFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_dep1.csv");
+  auto result2 = m.ReadDependenciesFromCSVFile("/home/jerry/Desktop/final-project-sweetmaru/input/my_dep1.csv");
   EXPECT_EQ(result2, gt2);
 
   std::vector<std::vector<std::string>> gt3 ={{"Target","Chipotle"}, {"Target","Leavey Library"}, {"Chipotle","Ralphs"},{"Ralphs","Leavey Library"}};
-  auto result3 = m.ReadDependenciesFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_dep2.csv");
+  // auto result3 = m.ReadDependenciesFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_dep2.csv");
+  auto result3 = m.ReadDependenciesFromCSVFile("/home/jerry/Desktop/final-project-sweetmaru/input/my_dep2.csv");
   EXPECT_EQ(result3, gt3);
 }
 
