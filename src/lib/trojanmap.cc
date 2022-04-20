@@ -388,6 +388,19 @@ std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTr
  */
 std::vector<std::string> TrojanMap::ReadLocationsFromCSVFile(std::string locations_filename){
   std::vector<std::string> location_names_from_csv;
+
+  std::fstream fin;
+  fin.open(locations_filename, std::ios::in);
+  std::string line;
+
+  // remove first line
+  getline(fin, line);
+
+  while (getline(fin, line)) {
+    location_names_from_csv.push_back(line);
+  }
+  fin.close();
+
   return location_names_from_csv;
 }
 
@@ -400,9 +413,33 @@ std::vector<std::string> TrojanMap::ReadLocationsFromCSVFile(std::string locatio
  */
 std::vector<std::vector<std::string>> TrojanMap::ReadDependenciesFromCSVFile(std::string dependencies_filename){
   std::vector<std::vector<std::string>> dependencies_from_csv;
+
+  std::fstream fin;
+  fin.open(dependencies_filename, std::ios::in);
+  std::string line, word;
+
+  // remove first line
+  getline(fin, line);
+
+  while (getline(fin, line)) {
+    std::stringstream s(line);
+    std::vector<std::string> dependencies;
+    while (getline(s, word, ',')) {
+      dependencies.push_back(word);
+    }
+    dependencies_from_csv.push_back(dependencies);
+  }
+  fin.close();
+
   return dependencies_from_csv;
 }
 
+//helper function for DeliveringTrojan, to build a graph based on the dependencies
+//the graph is a 2D vector, we can access the dependency of a location using the same index as the one in the vector locations
+std::vector<std::vector<std::string>> buildGraph(std::vector<std::string> &locations,
+                                                     std::vector<std::vector<std::string>> &dependencies);
+//helper function for DeliveringTrojan, to traverse the graph we build
+void traverseH(std::vector<std::string> &locations, std::vector<std::vector<std::string>> &graph, int i, std::vector<bool> &onPath, std::vector<bool> &visited, bool &hasCycle, std::vector<std::string> &postOrder);
 /**
  * DeliveringTrojan: Given a vector of location names, it should return a sorting of nodes
  * that satisfies the given dependencies. If there is no way to do it, return a empty vector.
@@ -414,7 +451,48 @@ std::vector<std::vector<std::string>> TrojanMap::ReadDependenciesFromCSVFile(std
 std::vector<std::string> TrojanMap::DeliveringTrojan(std::vector<std::string> &locations,
                                                      std::vector<std::vector<std::string>> &dependencies){
   std::vector<std::string> result;
+  std::vector<std::vector<std::string>> graph = buildGraph(locations, dependencies);
+  std::vector<bool> onPath(locations.size(), false);
+  std::vector<bool> visited(locations.size(), false);
+  bool hasCycle = false;
+
+  for(int i = 0; i < locations.size(); i++) { //try to start from every location to see if possible
+    traverseH(locations, graph, i, onPath, visited, hasCycle, result);
+  }
+
+  if(hasCycle) { //it is impossible to sort it as required if there is a cycle
+    std::vector<std::string> impossible;
+    return impossible;
+  }
+
+  std::reverse(result.begin(), result.end());
+
   return result;                                                     
+}
+
+std::vector<std::vector<std::string>> buildGraph(std::vector<std::string> &locations,
+                                                     std::vector<std::vector<std::string>> &dependencies){
+  std::vector<std::vector<std::string>> graph(locations.size());
+  for(auto arr: dependencies) {
+    auto it = find(locations.begin(),locations.end(),arr[0]);
+    graph[it-locations.begin()].push_back(arr[1]); //use the same index to find locations' dependencies in the graph
+  } 
+  return graph;                                                    
+}
+void traverseH(std::vector<std::string> &locations, std::vector<std::vector<std::string>> &graph, int i, std::vector<bool> &onPath, std::vector<bool> &visited, bool &hasCycle, std::vector<std::string> &postOrder){
+  if(onPath[i]) hasCycle = true; //if traverse to some location which is still on the current path
+
+  if(visited[i] || hasCycle) return; // visited or cycle detected
+
+  visited[i] = true;
+  onPath[i] = true;
+  for(auto dependency: graph[i]) {
+    auto it = find(locations.begin(),locations.end(),dependency);
+    int idx = it-locations.begin();
+    traverseH(locations,graph,idx,onPath,visited,hasCycle,postOrder);
+  }
+  postOrder.push_back(locations[i]); //push the location we visited to the vector in the reverse order of the topological order
+  onPath[i] = false;
 }
 
 /**
@@ -425,6 +503,9 @@ std::vector<std::string> TrojanMap::DeliveringTrojan(std::vector<std::string> &l
  * @return {bool}                      : in square or not
  */
 bool TrojanMap::inSquare(std::string id, std::vector<double> &square) {
+  double lat = GetLat(id);
+  double lon = GetLon(id);
+  if(lon > square[0] && lon < square[1] && lat > square[3] && lat < square[2]) return true;
   return false;
 }
 
@@ -437,6 +518,13 @@ bool TrojanMap::inSquare(std::string id, std::vector<double> &square) {
 std::vector<std::string> TrojanMap::GetSubgraph(std::vector<double> &square) {
   // include all the nodes in subgraph
   std::vector<std::string> subgraph;
+
+  for(auto loc: data){
+    if(inSquare(loc.first, square)) {
+      subgraph.push_back(loc.first);
+    }
+  }
+
   return subgraph;
 }
 
@@ -449,8 +537,36 @@ std::vector<std::string> TrojanMap::GetSubgraph(std::vector<double> &square) {
  * @return {bool}: whether there is a cycle or not
  */
 bool TrojanMap::CycleDetection(std::vector<std::string> &subgraph, std::vector<double> &square) {
-  return false;
+  std::vector<bool> onPath(subgraph.size(), false);
+  bool hasCycle = false;
+  for(int i = 0; i < subgraph.size(); i++) {
+    std::string prev = "";
+    std::vector<bool> visited(subgraph.size(), false);
+    traverse(subgraph, square, prev, i, onPath, visited, hasCycle);
+    if(hasCycle) break;
+  }
+  
+  return hasCycle;
 }
+void TrojanMap::traverse(std::vector<std::string> &subgraph, std::vector<double> &square, std::string prev, int i, std::vector<bool> &onPath, 
+                          std::vector<bool> &visited, bool &hasCycle) {
+  if(onPath[i]) hasCycle = true; //if traverse to some location which is still on the current path
+
+  if(visited[i] || hasCycle) return; // visited or cycle detected
+
+  visited[i] = true;
+  onPath[i] = true;
+  for(auto neighbor: GetNeighborIDs(subgraph[i])) {
+    auto it = find(subgraph.begin(), subgraph.end(), neighbor);
+    if(it == subgraph.end() || neighbor == prev) continue; //exclude the locations outside the square and the previous location
+    else {
+      int idx = it-subgraph.begin();
+      traverse(subgraph,square,subgraph[i],idx,onPath,visited,hasCycle);
+    }
+  }
+  onPath[i] = false;
+}
+
 
 /**
  * FindNearby: Given a class name C, a location name L and a number r, 

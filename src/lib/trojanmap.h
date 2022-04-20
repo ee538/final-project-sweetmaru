@@ -120,6 +120,8 @@ class TrojanMap {
   // Get the subgraph based on the input
   std::vector<std::string> GetSubgraph(std::vector<double> &square);
   
+  //helper function for CycleDetection, for traversing the subgraph
+  void traverse(std::vector<std::string> &subgraph, std::vector<double> &square, std::string prev, int i, std::vector<bool> &onPath, std::vector<bool> &visited, bool &hasCycle);
   // Given a subgraph specified by a square-shape area, determine whether there is a
   // cycle or not in this subgraph.
   bool CycleDetection(std::vector<std::string> &subgraph, std::vector<double> &square);

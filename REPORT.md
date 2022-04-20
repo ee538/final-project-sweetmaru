@@ -63,8 +63,70 @@ git reset --hard ID(first 6 char): reset to some old version
 
 ### Algorithms:  
 
+* CalculateShortestPath_Dijkstra  
+
+
+
+* CalculateShortestPath_Bellman_Ford  
+
+
+
+* DeliveringTrojan  
+
+We use DFS to solve this problem.  
+
+The function is actually meant to find if there exists a cycle in a directed graph, if not, return the topological sorting result.  
+
+Data Structure:  
+
+
+* CycleDetection  
+
+We use DFS to solve this problem.  
+
+The function is actually meant to find if there exists a cycle in an undirected graph.  
+
+Data Structure:  
+
+
 ### Description for each function:  
+1. CalculateShortestPath_Dijkstra  
+
+2. CalculateShortestPath_Bellman_Ford  
+
+3. ReadLocationsFromCSVFile  
+
+4. ReadDependenciesFromCSVFile  
+
+5. buildGraph  
+
+6. traverseH  
+
+7. DeliveringTrojan  
+
+8. inSquare  
+
+9. GetSubgraph  
+
+10. traverse  
+
+11. CycleDetection  
+
+
 
 ### Time spent:  
+1. CalculateShortestPath_Dijkstra  
+Ralphs->Target: 190ms  
+
+2. CalculateShortestPath_Bellman_Ford  
+Ralphs->Target: 9889ms  
+
+3. DeliveringTrojan  
+the given example: 0ms  
+my_loc1.csv, my_dep1.csv: 0ms  
+my_loc2.csv, my_dep2.csv: 0ms  
+
+4. CycleDetection  
+[-118.299,-118.264,34.032,34.011]: 4ms  
 
 ### Conclusion:  
