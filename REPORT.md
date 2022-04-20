@@ -75,9 +75,25 @@ git reset --hard ID(first 6 char): reset to some old version
 
 We use DFS to solve this problem.  
 
-The function is actually meant to find if there exists a cycle in a directed graph, if not, return the topological sorting result.  
+The function is actually meant to find if there exists a cycle in a directed graph, if not, return the possible topological sorting result.  
 
 Data Structure:  
+1. a 2D string-type vector representing the graph built based on the dependencies  
+2. a bool-type vector "onPath" representing the current path we are detecting, true if current on the path, false otherwise  
+3. a bool-type vector "visited" representing the node we have visited, true if visited, false otherwise  
+4. a bool-type variable "hasCycle" representing the current detecting result, true if a cycle has detected, false otherwise  
+5. an int-type variable "i" in traverseH function representing the index of the current node in the graph  
+
+Helper functions:
+1. "buildGraph": build the graph we need based on the parameters locations and dependencies  
+2. "traverseH": traverse the graph  
+When traversing, mark a node as visited and onPath on the preorder position, traverse its children, then mark it as not on the current path and push it to the postorder vector on the postorder position  
+
+If we detect that we return to a node which is already on the current path at the beginning, that means there exists a cycle  
+
+DeliveringTrojan function:  
+1. Use a for loop to make every node in the "locations" as a start point, and do the traversing.  
+2. If there exists no cycle, the final result of topological sort is just the reverse order of the postorder vector in the traverseH function.  
 
 
 * CycleDetection  
@@ -87,32 +103,51 @@ We use DFS to solve this problem.
 The function is actually meant to find if there exists a cycle in an undirected graph.  
 
 Data Structure:  
+1. a string-type vector representing the subgraph inside the square  
+2. a bool-type vector "onPath" representing the current path we are detecting, true if current on the path, false otherwise  
+3. a bool-type vector "visited" representing the node we have visited, true if visited, false otherwise  
+4. a bool-type variable "hasCycle" representing the current detecting result, true if a cycle has detected, false otherwise  
+5. a string-type variable "prev" representing the parent id of the current node  
+6. an int-type variable "i" in traverseH function representing the index of the current node in the subgraph  
 
+Helper functions:
+1. "traverse": traverse the subgraph  
+The basic algorithm is pretty much the same as the one in topological sort. The only difference is that we are now traversing through an undirected graph, which in other words means, it is directed in both ways. So we need a variable "prev" to record the parent of the current node, and skip the parent when doing the DFS.  
+
+And we also need to skip the ids whcih are outside of the square.  
 
 ### Description for each function:  
 1. CalculateShortestPath_Dijkstra  
 
+
 2. CalculateShortestPath_Bellman_Ford  
 
-3. ReadLocationsFromCSVFile  
 
-4. ReadDependenciesFromCSVFile  
+3. ReadLocationsFromCSVFile, ReadDependenciesFromCSVFile: Read and parse data from CSV file, and return vectors for topological sort problem.  
+Traverse the CSV file -----> O(n)  
 
-5. buildGraph  
+4. buildGraph: Helper function for DeliveringTrojan, to build a graph based on the dependencies  
+Traverse the dependencies(size m) and locations(size n) vector -----> worst case O(m+n)  
 
-6. traverseH  
+5. traverseH: Helper function for DeliveringTrojan, to traverse the graph we build  
+Traverse the graph(suppose n nodes) -----> worst case O(n)  
 
-7. DeliveringTrojan  
+6. DeliveringTrojan: Find the possible topological sort order  
+Try every node as a start point and traverse from it -----> worst case O(n+k)  
+k is the unsure number of the dependencies of each node  
 
-8. inSquare  
+7. inSquare: Give a id retunr whether it is in square or not.  
+O(1)  
 
-9. GetSubgraph  
+8. GetSubgraph: Give four vertexes of the square area, return a list of location ids in the squares.  
+Traverse the data vector -----> O(n)  
 
-10. traverse  
+9. traverse: helper function for CycleDetection, to traverse the graph we build  
+Traverse the subgraph(suppose n nodes) -----> worst case O(n)  
 
-11. CycleDetection  
-
-
+10. CycleDetection: Given four points of the square-shape subgraph, return true if there is a cycle path inside the square, false otherwise.  
+Try every node as a start point and traverse from it -----> worst case O(n+k)  
+k is the unsure number of the dependencies of each node  
 
 ### Time spent:  
 1. CalculateShortestPath_Dijkstra  
@@ -130,3 +165,6 @@ my_loc2.csv, my_dep2.csv: 0ms
 [-118.299,-118.264,34.032,34.011]: 4ms  
 
 ### Conclusion:  
+1. We need to carefully decide whether it is a case to pass parameter by reference.  
+e.g. The "prev" variable which records the parent node of the current node, should not be passed by reference, because it is used by every child of the parent. If passed by reference, only the first child will get the correct parent.  
+
