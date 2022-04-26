@@ -232,6 +232,10 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Dijkstra(
   if (sourceID.size() == 0 || destID.size() == 0){
     return path;
   }
+  // if source = destination
+  if (sourceID == destID){
+    return path;
+  }
   // if name correct. Initialization.
   std::unordered_set<std::string> visited;
   std::unordered_map<std::string, double> d;
@@ -364,20 +368,336 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Bellman_Ford(
 std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_Brute_force(
                                     std::vector<std::string> location_ids) {
   std::pair<double, std::vector<std::vector<std::string>>> records;
+  records.first = INT_MAX / 2;
+  double curDist = 0;
+  std::vector<std::string> curRoute;
+  backtrackHelper(curDist, curRoute, records, location_ids);
+
   return records;
+}
+
+void TrojanMap::backtrackHelper(double curDist, std::vector<std::string> &curRoute, 
+                     std::pair<double, std::vector<std::vector<std::string>>> &records,
+                     std::vector<std::string> &location_ids){
+  // if it's a leaf
+  if (curRoute.size() == location_ids.size()){
+    curDist = curDist + CalculateDistance(curRoute[0], curRoute[location_ids.size() - 1]);
+    curRoute.push_back(curRoute[0]);
+    if (curDist < records.first){
+      records.first = curDist;
+      records.second.push_back(curRoute);
+    }
+    curRoute.pop_back();
+    return;
+  }
+  // general case
+  for (int i = 0; i < location_ids.size(); i++){
+    if (find(curRoute.begin(), curRoute.end(), location_ids[i]) != curRoute.end()){
+      continue;
+    }
+    curRoute.push_back(location_ids[i]);
+    std::string formerLocation = "";
+    // first location
+    if (curRoute.size() == 1){
+      formerLocation = location_ids[i];
+    } else {
+      formerLocation = curRoute[curRoute.size() - 2];
+    }
+    double tempDist = CalculateDistance(formerLocation, location_ids[i]);
+    backtrackHelper(curDist + tempDist, curRoute, records, location_ids);
+    curRoute.pop_back();
+  }
 }
 
 std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_Backtracking(
                                     std::vector<std::string> location_ids) {
   std::pair<double, std::vector<std::vector<std::string>>> records;
+  records.first = INT_MAX / 2;
+  double curDist = 0;
+  std::vector<std::string> curRoute;
+  earlyBacktrackHelper(curDist, curRoute, records, location_ids);
   return records;
+}
+
+void TrojanMap::earlyBacktrackHelper(double curDist, std::vector<std::string> &curRoute, 
+                        std::pair<double, std::vector<std::vector<std::string>>> &records,
+                        std::vector<std::string> &location_ids){
+  // if it's a leaf
+  if (curRoute.size() == location_ids.size()){
+    curDist = curDist + CalculateDistance(curRoute[0], curRoute[location_ids.size() - 1]);
+    curRoute.push_back(curRoute[0]);
+    if (curDist < records.first){
+      records.first = curDist;
+      records.second.push_back(curRoute);
+    }
+    curRoute.pop_back();
+    return;
+  }
+  // general case
+  for (int i = 0; i < location_ids.size(); i++){
+    if (find(curRoute.begin(), curRoute.end(), location_ids[i]) != curRoute.end()){
+      continue;
+    }
+    curRoute.push_back(location_ids[i]);
+    std::string formerLocation = "";
+    // first location
+    if (curRoute.size() == 1){
+      formerLocation = location_ids[i];
+    } else {
+      formerLocation = curRoute[curRoute.size() - 2];
+    }
+    double tempDist = CalculateDistance(formerLocation, location_ids[i]);
+    // early backtrack
+    if (curDist + tempDist > records.first){
+      curRoute.pop_back();
+      continue;
+    }
+    earlyBacktrackHelper(curDist + tempDist, curRoute, records, location_ids);
+    curRoute.pop_back();
+  }
 }
 
 std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_2opt(
       std::vector<std::string> location_ids){
   std::pair<double, std::vector<std::vector<std::string>>> records;
+  std::vector<std::string> curRoute = location_ids;
+  double curDist = calculateTotalDistance(curRoute);
+  records.first = curDist;
+  curRoute.push_back(curRoute[0]);
+  records.second.push_back(curRoute);
+  curRoute.pop_back();
+  twoOptHelper(curDist, curRoute, records, location_ids);
+
   return records;
 }
+
+void TrojanMap::twoOptHelper(double curDist, std::vector<std::string> &curRoute, 
+                    std::pair<double, std::vector<std::vector<std::string>>> &records,
+                    std::vector<std::string> &location_ids){
+  
+  for (int i = 1; i < curRoute.size(); i++){
+    for (int j = i + 1; j < curRoute.size(); j++){
+      std::vector<std::string> tempRoute = twoOptSwap(curRoute, i, j);
+      double tempDistance = calculateTotalDistance(tempRoute);
+      if (tempDistance < records.first){
+        records.first = tempDistance;
+        tempRoute.push_back(tempRoute[0]);
+        records.second.push_back(tempRoute);
+        tempRoute.pop_back();
+        twoOptHelper(tempDistance, tempRoute, records, location_ids);
+      }
+    }
+  }                    
+}
+
+// calculate the distance of a path
+double TrojanMap::calculateTotalDistance(std::vector<std::string> &curRoute){
+  curRoute.push_back(curRoute[0]);
+  double res = CalculatePathLength(curRoute);
+  curRoute.pop_back();
+  return res;
+}
+
+// 2 opt swap
+std::vector<std::string> TrojanMap::twoOptSwap(std::vector<std::string> &curRoute, int l, int r){
+  std::vector<std::string> newRoute;
+  for (int i = 0; i < l; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = r; i >= l; i--){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = r + 1; i < curRoute.size(); i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  return newRoute;
+}
+
+// 3 opt
+std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_3opt(
+      std::vector<std::string> location_ids){
+  std::pair<double, std::vector<std::vector<std::string>>> records;
+  std::vector<std::string> curRoute = location_ids;
+  double curDist = calculateTotalDistance(curRoute);
+  records.first = curDist;
+  curRoute.push_back(curRoute[0]);
+  records.second.push_back(curRoute);
+  curRoute.pop_back();
+  threeOptHelper(curDist, curRoute, records, location_ids);
+
+  return records;
+}
+
+void TrojanMap::threeOptHelper(double curDist, std::vector<std::string> &curRoute, 
+                    std::pair<double, std::vector<std::vector<std::string>>> &records,
+                    std::vector<std::string> &location_ids){
+  
+  for (int i = 1; i < curRoute.size(); i++){
+    for (int j = i + 1; j < curRoute.size(); j++){
+      for (int k = j + 1; k < curRoute.size(); k++){
+        std::vector<std::string> tempRoute = threeOptSwap(curRoute, i, j, k);
+        double tempDistance = calculateTotalDistance(tempRoute);
+        if (tempDistance < records.first){
+          records.first = tempDistance;
+          tempRoute.push_back(tempRoute[0]);
+          records.second.push_back(tempRoute);
+          tempRoute.pop_back();
+          threeOptHelper(tempDistance, tempRoute, records, location_ids);
+        }
+      }
+    }
+  }                    
+}
+
+std::vector<std::string> TrojanMap::threeOptSwap(std::vector<std::string> &curRoute, int l1, int l2, int l3){
+  std::vector<std::string> bestRoute;
+  double min = INT_MAX / 2;
+  double tempDist;
+  std::vector<std::string> newRoute;
+  // // case 1
+  // newRoute.clear();
+  // for (int i = 0; i < l1; i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l2 - 1; i >= l1; i--){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l2; i < curRoute.size(); i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // tempDist = calculateTotalDistance(newRoute);
+  // if (tempDist < min){
+  //   min = tempDist;
+  //   bestRoute = newRoute;
+  // }
+  // // case 2
+  // newRoute.clear();
+  // for (int i = 0; i < l1; i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l3 - 1; i >= l1; i--){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l3; i < curRoute.size(); i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // tempDist = calculateTotalDistance(newRoute);
+  // if (tempDist < min){
+  //   min = tempDist;
+  //   bestRoute = newRoute;
+  // }
+  // // case 3
+  // newRoute.clear();
+  // for (int i = 0; i < l2; i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l3 - 1; i >= l1; i--){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l3; i < curRoute.size(); i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // tempDist = calculateTotalDistance(newRoute);
+  // if (tempDist < min){
+  //   min = tempDist;
+  //   bestRoute = newRoute;
+  // }
+  // // case 4
+  // newRoute.clear();
+  // for (int i = 0; i < l1; i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l2; i < l3; i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l2 - 1; i >= l1; i--){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l3; i < curRoute.size(); i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // tempDist = calculateTotalDistance(newRoute);
+  // if (tempDist < min){
+  //   min = tempDist;
+  //   bestRoute = newRoute;
+  // }
+  // // case 5
+  // newRoute.clear();
+  // for (int i = 0; i < l1; i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l2 - 1; i >= l1; i--){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l3 - 1; i >= l2; i--){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // for (int i = l3; i < curRoute.size(); i++){
+  //   newRoute.push_back(curRoute[i]);
+  // }
+  // tempDist = calculateTotalDistance(newRoute);
+  // if (tempDist < min){
+  //   min = tempDist;
+  //   bestRoute = newRoute;
+  // }
+  // case 6
+  newRoute.clear();
+  for (int i = 0; i < l1; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3 - 1; i >= l2; i--){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l1; i < l2; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3; i < curRoute.size(); i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  tempDist = calculateTotalDistance(newRoute);
+  if (tempDist < min){
+    min = tempDist;
+    bestRoute = newRoute;
+  }
+  // case 7
+  newRoute.clear();
+  for (int i = 0; i < l1; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l2; i < l3; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l1; i < l2; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3; i < curRoute.size(); i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  tempDist = calculateTotalDistance(newRoute);
+  if (tempDist < min){
+    min = tempDist;
+    bestRoute = newRoute;
+  }
+  // return result
+  return newRoute;
+}
+
+// std::vector<std::string> TrojanMap::threeOptSwap2(std::vector<std::string> &curRoute, int l1, int l2, int l3){
+//   std::vector<std::string> newRoute;
+//   for (int i = 0; i < l1; i++){
+//     newRoute.push_back(curRoute[i]);
+//   }
+//   for (int i = l3 - 1; i >= l2; i--){
+//     newRoute.push_back(curRoute[i]);
+//   }
+//   for (int i = l1; i < l2; i++){
+//     newRoute.push_back(curRoute[i]);
+//   }
+//   for (int i = l3; i < curRoute.size(); i++){
+//     newRoute.push_back(curRoute[i]);
+//   }
+//   return newRoute;
+// }
 
 /**
  * Given CSV filename, it read and parse locations data from CSV file,
@@ -560,8 +880,8 @@ void TrojanMap::traverse(std::vector<std::string> &subgraph, std::vector<double>
     auto it = find(subgraph.begin(), subgraph.end(), neighbor);
     if(it == subgraph.end() || neighbor == prev) continue; //exclude the locations outside the square and the previous location
     else {
-      int idx = it-subgraph.begin();
-      traverse(subgraph,square,subgraph[i],idx,onPath,visited,hasCycle);
+      int idx = it - subgraph.begin();
+      traverse(subgraph, square, subgraph[i], idx, onPath, visited, hasCycle);
     }
   }
   onPath[i] = false;
@@ -580,6 +900,25 @@ void TrojanMap::traverse(std::vector<std::string> &subgraph, std::vector<double>
  */
 std::vector<std::string> TrojanMap::FindNearby(std::string attributesName, std::string name, double r, int k) {
   std::vector<std::string> res;
+  std::priority_queue<std::pair<double, std::string>,
+                      std::vector<std::pair<double, std::string>>, cmp> pq;
+  std::string targetID = GetID(name);
+  for (auto cur : data){
+    if (cur.second.attributes.count(attributesName) > 0){
+      double dist = CalculateDistance(targetID, cur.second.id);
+      if (dist <= r && dist != 0){
+        pq.push(std::make_pair(dist, cur.second.id));
+      }
+    }
+  }
+
+  while (k > 0 && !pq.empty()){
+    std::pair<double, std::string> temp = pq.top();
+    pq.pop();
+    res.push_back(temp.second);
+    k--;
+  }
+
   return res;
 }
 

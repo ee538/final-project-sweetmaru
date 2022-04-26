@@ -130,7 +130,30 @@ class TrojanMap {
   std::vector<std::string> FindNearby(std::string, std::string, double, int);
   
   //----------------------------------------------------- User-defined functions
+  void backtrackHelper(double curDist, std::vector<std::string> &curRoute, 
+                        std::pair<double, std::vector<std::vector<std::string>>> &records,
+                        std::vector<std::string> &ulocation_ids);
 
+  void earlyBacktrackHelper(double curDist, std::vector<std::string> &curRoute, 
+                            std::pair<double, std::vector<std::vector<std::string>>> &records,
+                            std::vector<std::string> &ulocation_ids);
+  
+  void twoOptHelper(double curDist, std::vector<std::string> &curRoute, 
+                    std::pair<double, std::vector<std::vector<std::string>>> &records,
+                    std::vector<std::string> &location_ids);
+
+  double calculateTotalDistance(std::vector<std::string> &curRoute);
+
+  std::vector<std::string> twoOptSwap(std::vector<std::string> &curRoute, int l, int r);
+
+  std::pair<double, std::vector<std::vector<std::string>>> TravellingTrojan_3opt(
+                                            std::vector<std::string> location_ids);
+  
+  void threeOptHelper(double curDist, std::vector<std::string> &curRoute, 
+                  std::pair<double, std::vector<std::vector<std::string>>> &records,
+                  std::vector<std::string> &location_ids);
+
+  std::vector<std::string> threeOptSwap(std::vector<std::string> &curRoute, int l1, int l2, int l3);
 };
 
 struct cmp{
