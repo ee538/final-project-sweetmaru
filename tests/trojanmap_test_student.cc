@@ -225,3 +225,72 @@ TEST(TrojanMapStudentTest, P2_CycleDetection) {
   bool result2 = m.CycleDetection(sub2, square2);
   EXPECT_EQ(result2, false);
 }
+
+
+TEST(TrojanMapStudentTest, P3_TSP_Brute_Force) {
+  TrojanMap m;
+  
+  std::vector<std::string> input{"8201681442","6197156485","7786565237","6820972477","6807600525","1832234142","6819144993","1873055949"}; // Input location ids 
+  auto result = m.TravellingTrojan_Brute_force(input);
+  std::cout << "My path length: "  << result.first << "miles" << std::endl; // Print the result path lengths
+  std::vector<std::string> gt{"8201681442","1873055949","6197156485","1832234142","6807600525","6819144993","7786565237","6820972477","8201681442"}; // Expected order
+  std::cout << "GT path length: "  << m.CalculatePathLength(gt) << "miles" << std::endl; // Print the gt path lengths
+  bool flag = false;
+  if (gt == result.second[result.second.size()-1]) // clockwise
+    flag = true;
+  std::reverse(gt.begin(),gt.end()); // Reverse the expected order because the counterclockwise result is also correct
+  if (gt == result.second[result.second.size()-1]) 
+    flag = true;
+  
+  EXPECT_EQ(flag, true);
+}
+
+TEST(TrojanMapStudentTest, P3_TSP_Backtracking) {
+  TrojanMap m;
+  
+  std::vector<std::string> input{"8201681442","6197156485","7786565237","6820972477","6807600525","1832234142","6819144993","1873055949"}; // Input location ids 
+  auto result = m.TravellingTrojan_Backtracking(input);
+  std::cout << "My path length: "  << result.first << "miles" << std::endl; // Print the result path lengths
+  std::vector<std::string> gt{"8201681442","1873055949","6197156485","1832234142","6807600525","6819144993","7786565237","6820972477","8201681442"}; // Expected order
+  std::cout << "GT path length: "  << m.CalculatePathLength(gt) << "miles" << std::endl; // Print the gt path lengths
+  bool flag = false;
+  if (gt == result.second[result.second.size()-1]) // clockwise
+    flag = true;
+  std::reverse(gt.begin(),gt.end()); // Reverse the expected order because the counterclockwise result is also correct
+  if (gt == result.second[result.second.size()-1]) 
+    flag = true;
+  
+  EXPECT_EQ(flag, true);
+}
+
+TEST(TrojanMapStudentTest, P3_TSP_2opt) {
+  TrojanMap m;
+  
+  std::vector<std::string> input{"8201681442","6197156485","7786565237","6820972477","6807600525","1832234142","6819144993","1873055949"}; // Input location ids 
+  auto result = m.TravellingTrojan_2opt(input);
+  std::cout << "My path length: "  << result.first << "miles" << std::endl; // Print the result path lengths
+  std::vector<std::string> gt{"8201681442","1873055949","6197156485","1832234142","6807600525","6819144993","7786565237","6820972477","8201681442"}; // Expected order
+  std::cout << "GT path length: "  << m.CalculatePathLength(gt) << "miles" << std::endl; // Print the gt path lengths
+  bool flag = false;
+  if (gt == result.second[result.second.size()-1]) // clockwise
+    flag = true;
+  std::reverse(gt.begin(),gt.end()); // Reverse the expected order because the counterclockwise result is also correct
+  if (gt == result.second[result.second.size()-1]) 
+    flag = true;
+  
+  EXPECT_EQ(flag, true);
+}
+
+TEST(TrojanMapTest, P3_FindNearby) {
+  TrojanMap m;
+  
+  auto result = m.FindNearby("bank", "Chase", 10, 10);
+  std::vector<std::string> ans{"5237417651", "9591449465"};
+  EXPECT_EQ(result, ans);
+
+  //check the order
+  bool flag = false;
+  std::string name= m.GetID("Chase");
+  if(m.CalculateDistance(name, "5237417651")<m.CalculateDistance(name, "9591449465")) flag = true;
+  EXPECT_EQ(flag, true);
+}

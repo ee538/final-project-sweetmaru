@@ -64,46 +64,46 @@ git reset --hard ID(first 6 char): reset to some old version
 ### Algorithms:  
 
 * CalculateShortestPath_Dijkstra:  
-Our algorithm is following the instruction of discussion.
-● Get the start and end node from points’ names.
-● Create a min heap using priority queue with pair of <dist,id>.
-● Use a unordered map to save the shortest distance of each node.
-● Use a unordered map to save the predecessor of each node to build the path later;
-● Use a unordered map to store the visited nodes;
-● Initialize the map with start node is visited, the distance is 0 and
-● Put the start node into the min heap.
+Our algorithm is following the instruction of discussion.  
+● Get the start and end node from points’ names.  
+● Create a min heap using priority queue with pair of <dist,id>.  
+● Use a unordered map to save the shortest distance of each node.  
+● Use a unordered map to save the predecessor of each node to build the path later;  
+● Use a unordered map to store the visited nodes;  
+● Initialize the map with start node is visited, the distance is 0 and  
+● Put the start node into the min heap.  
 ● Extract the node from min heap and update the map until we find the destination node or
-the heap is empty.
-● Use predecessor map to build the entire shortest path.
- While loop:
-○ Find the shortest distance node;
-○ Check if current node is the end node or not;
+the heap is empty.  
+● Use predecessor map to build the entire shortest path.  
+ While loop:  
+○ Find the shortest distance node;  
+○ Check if current node is the end node or not;  
 ○ If not, check if current node’s distance is greater than this node’s current shortest
-distance in map or not.
-○ If yes, skip; If not, check if current node is visited or not.
-○ If yes, skip; If not, traverse current node’s neighbor nodes;
+distance in map or not.  
+○ If yes, skip; If not, check if current node is visited or not.  
+○ If yes, skip; If not, traverse current node’s neighbor nodes;  
 ○ The new distance of each neighbor node is the current distance + the distance
-between current node and the neighbor node;
-○ Check each neighbor node’s new distance is greater than the previous one or not;
+between current node and the neighbor node;  
+○ Check each neighbor node’s new distance is greater than the previous one or not;  
 ○ If yes, update the shortest distance map and predecessor map and push this pair of
-<dist,id> in min heap.
+<dist,id> in min heap.  
 
 
 * CalculateShortestPath_Bellman_Ford  
-Our algorithm is following the instruction of discussion.
-● Get the start and end node from points’ names;
-● Use a unordered map to save the shortest distance of each node.
-● Use a unordered map to save the predecessor of each node to build the path later;
-● Set a boolean stop sign as true;
-● Traverse all edges
+Our algorithm is following the instruction of discussion.  
+● Get the start and end node from points’ names;  
+● Use a unordered map to save the shortest distance of each node.  
+● Use a unordered map to save the predecessor of each node to build the path later;  
+● Set a boolean stop sign as true;  
+● Traverse all edges  
 ● The new distance of each neighbor node is the current distance + the distance between
-current node and the neighbor node;
-● Check each neighbor node’s new distance is shorter than the previous one or not;
+current node and the neighbor node;  
+● Check each neighbor node’s new distance is shorter than the previous one or not;  
 ● If yes, update this neighbor’s shortest distance and predecessor and mark stop sign as
-false (Because we can go further.)
-● If the stop sign is false, we continue traverse new data map again. Else, we break;
-● Check the shortest distance to end point exists or not;
-● If it exists, build the path from the predecessor map;
+false (Because we can go further.)  
+● If the stop sign is false, we continue traverse new data map again. Else, we break;  
+● Check the shortest distance to end point exists or not;  
+● If it exists, build the path from the predecessor map;  
 
 
 * DeliveringTrojan  
@@ -152,11 +152,11 @@ The basic algorithm is pretty much the same as the one in topological sort. The 
 And we also need to skip the ids whcih are outside of the square.  
 
 ### Description for each function:  
-1. CalculateShortestPath_Dijkstra: With the min heap -----> O(N + ElogN). Because every node will be traversed and priority queue will take logN time to sort itself.  
+1. CalculateShortestPath_Dijkstra:  
+With the min heap -----> O(N + ElogN). Because every node will be traversed and priority queue will take logN time to sort itself.  
 
-
-2. CalculateShortestPath_Bellman_Ford: O(N^2). Because it will loop N times for each node -----> N * N = N^2.  
-
+2. CalculateShortestPath_Bellman_Ford: O(N^2).  
+Because it will loop N times for each node -----> N * N = N^2.  
 
 3. ReadLocationsFromCSVFile, ReadDependenciesFromCSVFile: Read and parse data from CSV file, and return vectors for topological sort problem.  
 Traverse the CSV file -----> O(n)  
@@ -202,4 +202,16 @@ my_loc2.csv, my_dep2.csv: 0ms
 ### Conclusion:  
 1. We need to carefully decide whether it is a case to pass parameter by reference.  
 e.g. The "prev" variable which records the parent node of the current node, should not be passed by reference, because it is used by every child of the parent. If passed by reference, only the first child will get the correct parent.  
+
+
+
+## Phase 3
+
+### Algorithms:  
+
+### Description for each function:  
+
+### Time spent:  
+
+### Conclusion:  
 
