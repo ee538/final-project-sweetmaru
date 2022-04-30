@@ -339,6 +339,7 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Bellman_Ford(
         }
       }
     }
+    // early termination
     if (stop == true){
       break;
     }
@@ -554,92 +555,92 @@ std::vector<std::string> TrojanMap::threeOptSwap(std::vector<std::string> &curRo
   double min = INT_MAX / 2;
   double tempDist;
   std::vector<std::string> newRoute;
-  // // case 1
-  // newRoute.clear();
-  // for (int i = 0; i < l1; i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l2 - 1; i >= l1; i--){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l2; i < curRoute.size(); i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // tempDist = calculateTotalDistance(newRoute);
-  // if (tempDist < min){
-  //   min = tempDist;
-  //   bestRoute = newRoute;
-  // }
-  // // case 2
-  // newRoute.clear();
-  // for (int i = 0; i < l1; i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l3 - 1; i >= l1; i--){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l3; i < curRoute.size(); i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // tempDist = calculateTotalDistance(newRoute);
-  // if (tempDist < min){
-  //   min = tempDist;
-  //   bestRoute = newRoute;
-  // }
-  // // case 3
-  // newRoute.clear();
-  // for (int i = 0; i < l2; i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l3 - 1; i >= l1; i--){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l3; i < curRoute.size(); i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // tempDist = calculateTotalDistance(newRoute);
-  // if (tempDist < min){
-  //   min = tempDist;
-  //   bestRoute = newRoute;
-  // }
-  // // case 4
-  // newRoute.clear();
-  // for (int i = 0; i < l1; i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l2; i < l3; i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l2 - 1; i >= l1; i--){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l3; i < curRoute.size(); i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // tempDist = calculateTotalDistance(newRoute);
-  // if (tempDist < min){
-  //   min = tempDist;
-  //   bestRoute = newRoute;
-  // }
-  // // case 5
-  // newRoute.clear();
-  // for (int i = 0; i < l1; i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l2 - 1; i >= l1; i--){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l3 - 1; i >= l2; i--){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // for (int i = l3; i < curRoute.size(); i++){
-  //   newRoute.push_back(curRoute[i]);
-  // }
-  // tempDist = calculateTotalDistance(newRoute);
-  // if (tempDist < min){
-  //   min = tempDist;
-  //   bestRoute = newRoute;
-  // }
+  // case 1
+  newRoute.clear();
+  for (int i = 0; i < l1; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l2 - 1; i >= l1; i--){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l2; i < curRoute.size(); i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  tempDist = calculateTotalDistance(newRoute);
+  if (tempDist < min){
+    min = tempDist;
+    bestRoute = newRoute;
+  }
+  // case 2
+  newRoute.clear();
+  for (int i = 0; i < l1; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3 - 1; i >= l1; i--){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3; i < curRoute.size(); i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  tempDist = calculateTotalDistance(newRoute);
+  if (tempDist < min){
+    min = tempDist;
+    bestRoute = newRoute;
+  }
+  // case 3
+  newRoute.clear();
+  for (int i = 0; i < l2; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3 - 1; i >= l1; i--){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3; i < curRoute.size(); i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  tempDist = calculateTotalDistance(newRoute);
+  if (tempDist < min){
+    min = tempDist;
+    bestRoute = newRoute;
+  }
+  // case 4
+  newRoute.clear();
+  for (int i = 0; i < l1; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l2; i < l3; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l2 - 1; i >= l1; i--){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3; i < curRoute.size(); i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  tempDist = calculateTotalDistance(newRoute);
+  if (tempDist < min){
+    min = tempDist;
+    bestRoute = newRoute;
+  }
+  // case 5
+  newRoute.clear();
+  for (int i = 0; i < l1; i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l2 - 1; i >= l1; i--){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3 - 1; i >= l2; i--){
+    newRoute.push_back(curRoute[i]);
+  }
+  for (int i = l3; i < curRoute.size(); i++){
+    newRoute.push_back(curRoute[i]);
+  }
+  tempDist = calculateTotalDistance(newRoute);
+  if (tempDist < min){
+    min = tempDist;
+    bestRoute = newRoute;
+  }
   // case 6
   newRoute.clear();
   for (int i = 0; i < l1; i++){
