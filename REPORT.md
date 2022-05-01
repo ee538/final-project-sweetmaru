@@ -299,24 +299,3 @@ Backtracking: 557ms
 
 2. In TravellingTrojan, the method 2opt sacrifices accuracy to run faster and get a suboptimal solution. We can compare the run time and results by the following graph.  
 <p align="center"><img src="img/TravellingTrojan compare.png" alt="TravellingTrojan compare" width="500"/></p>
-
-
-//10 edges possioble case
-  //change to the local absolute path!
-  std::vector<std::string> loc3 = m.ReadLocationsFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_loc3.csv");
-  std::vector<std::vector<std::string>> dep3 = m.ReadDependenciesFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_dep3.csv");
-  auto res3 = m.DeliveringTrojan(loc3, dep3);
-  std::vector<std::string> gt3 ={"Lyons Center", "Starbucks", "Popeyes", "The Barber Shop", "CorePower Yoga", "Chase", "Ralphs", "Dulce", "CAVA", "Bank of America"};
-  EXPECT_EQ(res3, gt3);
-
-// Test case 3
-  std::vector<double> square3 = {-118.297, -118.272, 34.031, 34.015};
-  auto sub3 = m.GetSubgraph(square3);
-  bool result3 = m.CycleDetection(sub3, square3);
-  EXPECT_EQ(result3, true);
-
-  // Test case 4
-  std::vector<double> square4 = {-118.297, -118.275, 34.030, 34.018};
-  auto sub4 = m.GetSubgraph(square4);
-  bool result4 = m.CycleDetection(sub4, square4);
-  EXPECT_EQ(result4, true);
