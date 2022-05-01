@@ -289,7 +289,7 @@ n is the total number of data -----> O(n+k)
 Brute_force: 941ms  
 Backtracking: 557ms  
 2opt: 14ms  
-<p align="center"><img src="img/TravellingTrojan example.png" alt="TravellingTrojan example" width="500"/></p>
+<p align="center"><img src="img/TravellingTrojan example.png" alt="TravellingTrojan example" width="800"/></p>
 
 2. FindNearby: 72ms  
 <p align="center"><img src="img/FindNearby example.png" alt="FindNearby example" width="500"/></p>
