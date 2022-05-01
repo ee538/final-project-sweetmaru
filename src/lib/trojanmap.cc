@@ -683,22 +683,6 @@ std::vector<std::string> TrojanMap::threeOptSwap(std::vector<std::string> &curRo
   return newRoute;
 }
 
-// std::vector<std::string> TrojanMap::threeOptSwap2(std::vector<std::string> &curRoute, int l1, int l2, int l3){
-//   std::vector<std::string> newRoute;
-//   for (int i = 0; i < l1; i++){
-//     newRoute.push_back(curRoute[i]);
-//   }
-//   for (int i = l3 - 1; i >= l2; i--){
-//     newRoute.push_back(curRoute[i]);
-//   }
-//   for (int i = l1; i < l2; i++){
-//     newRoute.push_back(curRoute[i]);
-//   }
-//   for (int i = l3; i < curRoute.size(); i++){
-//     newRoute.push_back(curRoute[i]);
-//   }
-//   return newRoute;
-// }
 
 /**
  * Given CSV filename, it read and parse locations data from CSV file,

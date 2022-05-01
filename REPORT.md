@@ -257,34 +257,43 @@ Data Structure:
 We first traverse the data to get the valid location ids and put them into the priority queue. Then we just put the first k results into the vector from the priority queue.  
 
 ### Description for each function:  
-1. TravellingTrojan_Brute_force  
+1. TravellingTrojan_Brute_forceL: try all permutation and find the shortest path  
 O(!(n-1))  
 
-2. backtrackHelper  
+2. backtrackHelper: helper function to do the backtracking  
 O(!(n-1))  
 
-3. TravellingTrojan_Backtracking  
+3. TravellingTrojan_Backtracking: based on the Brute_Force method, early return when the distance of the current path is larger than the current shortest path  
 worst case -----> O(!(n-1))  
 
-4. earlyBacktrackHelper  
+4. earlyBacktrackHelper: helper function to do the backtracking    
 worst case -----> O(!(n-1))  
 
-5. TravellingTrojan_2opt  
+5. TravellingTrojan_2opt: keep finding a subpath and reverse it to check if there will be any improvement  
 best case -----> O(n^2)  
 worst case -----> O(n^4)  
 
-6. twoOptHelper  
+6. twoOptHelper: helper function to find the subpath  
 best case -----> O(n^2)  
 worst case -----> O(n^4)  
 
-7. calculateTotalDistance  
+7. calculateTotalDistance: add the start node as the destination and calculate the total distance of a path  
 n is the number of the locations in the path -----> O(n)  
 
-8. twoOptSwap  
+8. twoOptSwap: create a new path based on the given two nodes  
 n is the number of the locations in the path -----> O(n)  
 
-9. FindNearby  
+9. FindNearby: find all locations in class C on the map near L with the range of r and return a vector of string ids  
 n is the total number of data -----> O(n+k)  
+
+10. TravellingTrojan_3opt: keep finding a subpath and reverse it to check if there will be any improvement, but using 3-opt    
+O(n^3)  
+
+11. threeOptHelper: helper function to find the subpath  
+O(n^3)  
+
+12. threeOptSwap: check all 7 cases of 3-opt and return the one with smallest distance  
+O(n）
 
 ### Time spent:  
 1. TravellingTrojan  
@@ -299,5 +308,5 @@ Backtracking: 557ms
 ### Conclusion:  
 1. Priority queue is useful for an output requiring some certain orders.  
 
-2. In TravellingTrojan, the method 2opt sacrifices accuracy to run faster and get a suboptimal solution. We can compare the run time and results by the following graph.  
+2. In TravellingTrojan, the method 2-opt and 3-opt sacrifices accuracy to run faster and get a suboptimal solution. We can compare the run time and results by the following graph.  
 <p align="center"><img src="img/TravellingTrojan compare.png" alt="TravellingTrojan compare" width="500"/></p>
