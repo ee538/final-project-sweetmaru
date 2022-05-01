@@ -270,10 +270,12 @@ worst case -----> O(!(n-1))
 worst case -----> O(!(n-1))  
 
 5. TravellingTrojan_2opt  
-
+best case -----> O(n^2)  
+worst case -----> O(n^4)  
 
 6. twoOptHelper  
-
+best case -----> O(n^2)  
+worst case -----> O(n^4)  
 
 7. calculateTotalDistance  
 n is the number of the locations in the path -----> O(n)  
