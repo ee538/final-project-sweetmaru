@@ -156,7 +156,7 @@ TEST(TrojanMapStudentTest, P2_DeliveringTrojan) {
   std::vector<std::string> loc3 = m.ReadLocationsFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_loc3.csv");
   std::vector<std::vector<std::string>> dep3 = m.ReadDependenciesFromCSVFile("/Users/luoxiaofeng/Desktop/EE_538/2022sp_ee538_project/final-project-sweetmaru/input/my_dep3.csv");
   auto res3 = m.DeliveringTrojan(loc3, dep3);
-  std::vector<std::string> gt3 ={"Lyons Center", "Chase", "Ralphs", "Dulce", "CAVA", "Bank of America"};
+  std::vector<std::string> gt3 ={"Lyons Center", "Starbucks", "Popeyes", "The Barber Shop", "CorePower Yoga", "Chase", "Ralphs", "Dulce", "CAVA", "Bank of America"};
   EXPECT_EQ(res3, gt3);
 }
 

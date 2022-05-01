@@ -379,7 +379,7 @@ std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTr
 void TrojanMap::backtrackHelper(double curDist, std::vector<std::string> &curRoute, 
                      std::pair<double, std::vector<std::vector<std::string>>> &records,
                      std::vector<std::string> &location_ids){
-  // if it's a leaf
+  // if it's a leaf, update
   if (curRoute.size() == location_ids.size()){
     curDist = curDist + CalculateDistance(curRoute[0], curRoute[location_ids.size() - 1]);
     curRoute.push_back(curRoute[0]);
@@ -387,7 +387,7 @@ void TrojanMap::backtrackHelper(double curDist, std::vector<std::string> &curRou
       records.first = curDist;
       records.second.push_back(curRoute);
     }
-    curRoute.pop_back();
+    curRoute.pop_back(); //pop the duplicate destination
     return;
   }
   // general case
@@ -492,7 +492,7 @@ void TrojanMap::twoOptHelper(double curDist, std::vector<std::string> &curRoute,
 
 // calculate the distance of a path
 double TrojanMap::calculateTotalDistance(std::vector<std::string> &curRoute){
-  curRoute.push_back(curRoute[0]);
+  curRoute.push_back(curRoute[0]); //add the start point as the destination
   double res = CalculatePathLength(curRoute);
   curRoute.pop_back();
   return res;

@@ -89,6 +89,7 @@ between current node and the neighbor node;
 <dist,id> in min heap.  
 
 
+
 * CalculateShortestPath_Bellman_Ford  
 Our algorithm is following the instruction of discussion.  
 ● Get the start and end node from points’ names;  
@@ -106,8 +107,8 @@ false (Because we can go further.)
 ● If it exists, build the path from the predecessor map;  
 
 
-* DeliveringTrojan  
 
+* DeliveringTrojan  
 We use DFS to solve this problem.  
 
 The function is actually meant to find if there exists a cycle in a directed graph, if not, return the possible topological sorting result.  
@@ -119,7 +120,7 @@ Data Structure:
 4. a bool-type variable "hasCycle" representing the current detecting result, true if a cycle has detected, false otherwise  
 5. an int-type variable "i" in traverseH function representing the index of the current node in the graph  
 
-Helper functions:
+Helper functions:  
 1. "buildGraph": build the graph we need based on the parameters locations and dependencies  
 2. "traverseH": traverse the graph  
 When traversing, mark a node as visited and onPath on the preorder position, traverse its children, then mark it as not on the current path and push it to the postorder vector on the postorder position  
@@ -131,8 +132,8 @@ DeliveringTrojan function:
 2. If there exists no cycle, the final result of topological sort is just the reverse order of the postorder vector in the traverseH function.  
 
 
-* CycleDetection  
 
+* CycleDetection  
 We use DFS to solve this problem.  
 
 The function is actually meant to find if there exists a cycle in an undirected graph.  
@@ -145,7 +146,7 @@ Data Structure:
 5. a string-type variable "prev" representing the parent id of the current node  
 6. an int-type variable "i" in traverseH function representing the index of the current node in the subgraph  
 
-Helper functions:
+Helper functions:  
 1. "traverse": traverse the subgraph  
 The basic algorithm is pretty much the same as the one in topological sort. The only difference is that we are now traversing through an undirected graph, which in other words means, it is directed in both ways. So we need a variable "prev" to record the parent of the current node, and skip the parent when doing the DFS.  
 
@@ -203,15 +204,98 @@ my_loc2.csv, my_dep2.csv: 0ms
 1. We need to carefully decide whether it is a case to pass parameter by reference.  
 e.g. The "prev" variable which records the parent node of the current node, should not be passed by reference, because it is used by every child of the parent. If passed by reference, only the first child will get the correct parent.  
 
+2. Even we have done the early termination in the Bellman_Ford method, Dijkstra still works better than Bellman_Ford.  
+<p align="center"><img src="img/Shortest path compare.png" alt="Shortest path compare" width="500"/></p>
 
 
 ## Phase 3
 
 ### Algorithms:  
 
+* TravellingTrojan  
+The function is meant to find the shortest path which visit all the places and back to the start point.  
+
+1. Brute force  
+We use the backtracking method to check all the possible permutations.  
+
+Data Structure:  
+1. a pair representing the output of shortest path and its distance  
+2. a double variable "curDist" recording the current distance of the current path  
+3. a string type vector "curRoute" recording the current path  
+
+Helper functions:  
+1. backtrackHelper  
+Use DFS algorithm to traverse the given location ids. Push the current node into the current path vector at the preorder position and calculate the distance between current node and the parent node. Pop the node at the postorder position to try a new permutation.  
+
+Before push the node, we need to first check if the node is a leaf. If we reach the leaf, then calculate the total distance and update.  
+
+2. Early Backtracking  
+The data structure and the algorithm are the same as the brute force method.  
+The only difference is that we compare the current distance with the minimum distance before the loop. If it is larger than the minimum distance, we directly return.  
+
+3. 2opt  
+We use the given vector as the initial path. Use two for loops in the helper function to obatin a sub part and reverse the sub part to get a new path. If the distance of the new path is smaller, then update the minimum distance and path.  
+
+The data structure is the same as the one in the previous method.  
+
+Helper functions:  
+1. twoOptHelper  
+Use two for loops to try every possible ways. If a shorter path is detected, update and try to find new improvements using the updated path.  
+
+2. twoOptSwap  
+Swap the sub part and return a new possible path.  
+
+
+
+* FindNearby
+The function is meant to find k valid nearby location ids based on given center location and radius.  
+
+Data Structure:  
+1. a priority queue with type std::pair<double, std::string> and less priority ----- to sort the valid location ids for output  
+2. a string type vector for storing the results  
+
+We first traverse the data to get the valid location ids and put them into the priority queue. Then we just put the first k results into the vector from the priority queue.  
+
 ### Description for each function:  
+1. TravellingTrojan_Brute_force  
+O(!(n-1))  
+
+2. backtrackHelper  
+O(!(n-1))  
+
+3. TravellingTrojan_Backtracking  
+worst case -----> O(!(n-1))  
+
+4. earlyBacktrackHelper  
+worst case -----> O(!(n-1))  
+
+5. TravellingTrojan_2opt  
+
+
+6. twoOptHelper  
+
+
+7. calculateTotalDistance  
+n is the number of the locations in the path -----> O(n)  
+
+8. twoOptSwap  
+n is the number of the locations in the path -----> O(n)  
+
+9. FindNearby  
+n is the total number of data -----> O(n+k)  
 
 ### Time spent:  
+1. TravellingTrojan  
+Brute_force: 941ms  
+Backtracking: 557ms  
+2opt: 14ms  
+<p align="center"><img src="img/TravellingTrojan example.png" alt="TravellingTrojan example" width="500"/></p>
+
+2. FindNearby: 72ms  
+<p align="center"><img src="img/FindNearby example.png" alt="FindNearby example" width="500"/></p>
 
 ### Conclusion:  
+1. Priority queue is useful for an output requiring some certain orders.  
 
+2. In TravellingTrojan, the method 2opt sacrifices accuracy to run faster and get a suboptimal solution. We can compare the run time and results by the following graph.  
+<p align="center"><img src="img/TravellingTrojan compare.png" alt="TravellingTrojan compare" width="500"/></p>
